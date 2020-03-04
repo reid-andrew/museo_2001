@@ -62,7 +62,6 @@ class CuratorTest < Minitest::Test
   def test_it_has_attributes
     assert_equal [], @curator.photographs
     assert_equal [], @curator.artists
-
   end
 
   def test_it_adds_photographs
@@ -218,7 +217,6 @@ class CuratorTest < Minitest::Test
 
     assert_equal 44, @curator.artist_age(diane_arbus, ident_twins)
     assert_equal 39, @curator.artist_age(diane_arbus, grenade_kid)
-
   end
 
   def test_it_returns_photographs_by_artist_age
