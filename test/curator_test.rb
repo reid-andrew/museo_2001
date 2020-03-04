@@ -214,8 +214,11 @@ class CuratorTest < Minitest::Test
     @curator.load_photographs('./data/photographs.csv')
     diane_arbus = @curator.find_artist_by_id("3")
     ident_twins = @curator.photographs[2]
+    grenade_kid = @curator.photographs[3]
 
     assert_equal 44, @curator.artist_age(diane_arbus, ident_twins)
+    assert_equal 39, @curator.artist_age(diane_arbus, grenade_kid)
+
   end
 
   def test_it_returns_photographs_by_artist_age
