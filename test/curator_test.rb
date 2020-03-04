@@ -84,6 +84,7 @@ class CuratorTest < Minitest::Test
     @curator.add_artist(@artist_2)
 
     assert_equal @artist_1, @curator.find_artist_by_id("1")
+    assert_nil @curator.find_artist_by_id("1999")
   end
 
   def test_it_finds_photo_by_artist_id
@@ -94,9 +95,17 @@ class CuratorTest < Minitest::Test
     @curator.add_photograph(@photo_2)
     @curator.add_photograph(@photo_3)
     @curator.add_photograph(@photo_4)
+    artist = Artist.new({
+      id: "10",
+      name: "Andy Warhol",
+      born: "1928",
+      died: "1987",
+      country: "United States"
+    })
 
     assert_equal [@photo_1], @curator.find_photo_by_artist_id(@artist_1)
     assert_equal [@photo_3, @photo_4], @curator.find_photo_by_artist_id(@artist_3)
+    assert_equal [], @curator.find_photo_by_artist_id(artist)
   end
 
   def test_it_counts_photos_by_artist
@@ -107,9 +116,18 @@ class CuratorTest < Minitest::Test
     @curator.add_photograph(@photo_2)
     @curator.add_photograph(@photo_3)
     @curator.add_photograph(@photo_4)
+    artist = Artist.new({
+      id: "10",
+      name: "Andy Warhol",
+      born: "1928",
+      died: "1987",
+      country: "United States"
+    })
 
     assert_equal 1, @curator.count_of_photos_by_artist(@artist_1)
     assert_equal 2, @curator.count_of_photos_by_artist(@artist_3)
+    assert_equal 0, @curator.count_of_photos_by_artist(artist)
+
   end
 
   def test_it_returns_photographs_by_artist
@@ -159,6 +177,7 @@ class CuratorTest < Minitest::Test
 
     @curator.load_photographs('./data/photographs.csv')
 
+    assert_instance_of Photograph, @curator.photographs.sample
     assert_equal 4, @curator.photographs.size
     assert_equal @photo_1.name, @curator.photographs[0].name
     assert_equal @photo_1.id, @curator.photographs[0].id
@@ -171,6 +190,7 @@ class CuratorTest < Minitest::Test
 
     @curator.load_artists('./data/artists.csv')
 
+    assert_instance_of Artist, @curator.artists.sample
     assert_equal 6, @curator.artists.size
     assert_equal @artist_1.name, @curator.artists[0].name
     assert_equal @artist_1.id, @curator.artists[0].id
@@ -189,6 +209,15 @@ class CuratorTest < Minitest::Test
     assert_equal expected, @curator.photographs_taken_between(1940..1955)
   end
 
+  def test_it_gets_age_of_artist_when_photo_taken
+    @curator.load_artists('./data/artists.csv')
+    @curator.load_photographs('./data/photographs.csv')
+    diane_arbus = @curator.find_artist_by_id("3")
+    ident_twins = @curator.photographs[2]
+
+    assert_equal 44, @curator.artist_age(diane_arbus, ident_twins)
+  end
+
   def test_it_returns_photographs_by_artist_age
     @curator.load_artists('./data/artists.csv')
     @curator.load_photographs('./data/photographs.csv')
@@ -201,7 +230,6 @@ class CuratorTest < Minitest::Test
     henri = @curator.find_artist_by_id("1")
 
     assert_equal expected, @curator.artists_photographs_by_age(henri)
-
   end
 
 end
